@@ -208,6 +208,27 @@ These imply that unlike DTMF decoder implementations, a series of measurements s
 be made during the signal and a final decision determined from statistical analysis 
 of the raw measurements.
 
+The normal source of sampled audio is the soundcard interface. Standard sampling rates
+of 44100, 22050, 10025, and 8000 samples/second are supported. Lower sampling rates are
+preferred due to the lover processing load, as are fixed point DSP implementations
+versus floating point implementations.
+
+### Pseudocode
+
+    Calculate numnber of samples per interval
+    While true
+      Clear signal table
+      set signal table row to 0
+      read audio samples for one interval
+      perform time to frequency conversion
+      add tones detected to signal table
+      if 2 tones detected
+        For remaining number of intervals
+          read audio samples for one interval
+          perform time to frequency conversion
+          add tones detected to signal table
+        Read signal table and determine selcal code
+
 References
 ----------
 [1]: http://www.asri.aero/our-services/selcal/ "Aviation Spectrum Resources Inc. website, retrieved 3, Nov 2013"
