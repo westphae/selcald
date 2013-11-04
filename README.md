@@ -220,12 +220,13 @@ versus floating point implementations.
       Clear signal table
       set signal table row to 0
       read audio samples for one interval
-      perform time to frequency conversion
+      perform time to frequency conversion of samples
       add tones detected to signal table
-      if 2 tones detected
+      if two tones detected
         For remaining number of intervals
+          increment signal table row
           read audio samples for one interval
-          perform time to frequency conversion
+          perform time to frequency conversion of samples
           add tones detected to signal table
         Read signal table and determine selcal code
 
