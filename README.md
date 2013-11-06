@@ -212,7 +212,7 @@ of the raw measurements.
 
 The normal source of sampled audio is the soundcard interface. Standard sampling rates
 of 44100, 22050, 10025, and 8000 samples/second are supported. Lower sampling rates are
-preferred due to the lover processing load, as are fixed point DSP implementations
+preferred due to the lower processing load, as are fixed point DSP implementations
 versus floating point implementations.
 
 ### Pseudocode
