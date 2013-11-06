@@ -196,7 +196,9 @@ this has been well documented. There are several approaches available:
 2. Discrete FFT and energy detection in bins containing selcal tones
 3. Goertzl algorithm for fast DFT (see <https://en.wikipedia.org/wiki/Goertzel_algorithm>)
 4. Chirp-Z transform for DFT (see <https://en.wikipedia.org/wiki/Bluestein%27s_FFT_algorithm>)
-5. Wavelet transform and convolution (seems highly advanced)
+5. MUSIC algorithm (see <https://en.wikipedia.org/wiki/Multiple_signal_classification>)
+6. ESPRIT algorithm (see <https://en.wikipedia.org/wiki/Estimation_of_signal_parameters_via_rotational_invariance_techniques>)
+7. Wavelet transform and convolution (seems highly advanced)
 
 The implementation should take into account characteristics of the HF radio medium:
 
