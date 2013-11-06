@@ -210,10 +210,12 @@ These imply that unlike DTMF decoder implementations, a series of measurements s
 be made during the signal and a final decision determined from statistical analysis 
 of the raw measurements.
 
-The normal source of sampled audio is the soundcard interface. Standard sampling rates
-of 44100, 22050, 10025, and 8000 samples/second are supported. Lower sampling rates are
-preferred due to the lower processing load, as are fixed point DSP implementations
-versus floating point implementations.
+The normal source of sampled audio is the soundcard interface. 
+After some digging, it seems that PortAudio would be a good choice for an audio interface
+API, since it provides both a degree of platform independence and isolates the application
+from the various underlying audio frameworks (i.e. ALSA, Pulseaudio, SndKit, etc.).
+In general, lower sampling rates are preferred due to the reduced processing load, 
+as are fixed point DSP implementations versus floating point implementations.
 
 ### Pseudocode
 
