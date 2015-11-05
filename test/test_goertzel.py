@@ -1,21 +1,7 @@
-from math import sin, cos, pi
+from math import sin, pi, sqrt
+from src.goertzel import goertzel
 
 
-def goertzel(sampling_rate, target_frequency, n, optimized=True):
-    k = round(n*target_frequency/sampling_rate)
-    omega = (2*pi/n)*k
-    sine = sin(omega)
-    cosine = cos(omega)
-    coeff = 2*cosine
-    q2, q1 = 0, 0
-    for i in range(n):
-        sample = yield
-        q2, q1 = q1, (coeff*q1 - q2 + sample)
-    return (q1**2 + q2**2 - q1*q2*coeff) if optimized else \
-        complex(q1 - q2*cosine, q2*sine)
-
-
-# Test code
 def generate(frequency, sampling_rate, n):
     # Synthesize some test data at a given frequency.
     step = 2*pi*frequency/sampling_rate
@@ -23,7 +9,6 @@ def generate(frequency, sampling_rate, n):
 
 
 def generate_and_test(frequency, target_frequency, sampling_rate, n):
-    from math import sqrt
     # Test 1
     print("For test frequency %f:" % frequency)
     test_data = generate(frequency, sampling_rate, n)
@@ -72,6 +57,7 @@ def generate_and_test2(frequency, target_frequency, sampling_rate, n):
     magnitude = abs(res)
     print("rel mag=%12.5f" % magnitude)
     print("")
+
 
 if __name__ == '__main__':
 
