@@ -1,43 +1,21 @@
-from math import sin, cos, pi, sqrt
+from math import sin, cos, pi
 
 
-class Goertzel:
-    def __init__(self, sampling_rate, target_frequency, n):
-        self.q2, self.q1 = 0, 0
-
-        # precompute the constants
-        k = round(n*target_frequency/sampling_rate)
-        omega = (2*pi/n)*k
-        self.sine = sin(omega)
-        self.cosine = cos(omega)
-        self.coeff = 2*self.cosine
-
-        print("k: %f" % k)
-        print("coeff: %f" % self.coeff)
-
-    def process_block(self, sample):
-        """Call this routine for every sample block (size n)."""
-        self.q2, self.q1 = 0, 0
-        for s in sample:
-            self.q2, self.q1 = self.q1, (self.coeff*self.q1 - self.q2 + s)
-
-    def get_complex_result(self):
-        """
-        Basic Goertzel:
-        Call this routine after every block to get the complex result.
-        """
-        return complex(self.q1 - self.q2*self.cosine, self.q2*self.sine)
-
-    def get_magnitude_squared(self):
-        """
-        Optimized Goertzel:
-        Call this after every block to get the RELATIVE magnitude squared.
-        """
-        return self.q1**2 + self.q2**2 - self.q1*self.q2*self.coeff
+def goertzel(sampling_rate, target_frequency, n, optimized=True):
+    k = round(n*target_frequency/sampling_rate)
+    omega = (2*pi/n)*k
+    sine = sin(omega)
+    cosine = cos(omega)
+    coeff = 2*cosine
+    q2, q1 = 0, 0
+    for i in range(n):
+        sample = yield
+        q2, q1 = q1, (coeff*q1 - q2 + sample)
+    return (q1**2 + q2**2 - q1*q2*coeff) if optimized else \
+        complex(q1 - q2*cosine, q2*sine)
 
 
 # Test code
-
 def generate(frequency, sampling_rate, n):
     # Synthesize some test data at a given frequency.
     step = 2*pi*frequency/sampling_rate
@@ -45,17 +23,19 @@ def generate(frequency, sampling_rate, n):
 
 
 def generate_and_test(frequency, target_frequency, sampling_rate, n):
+    from math import sqrt
     # Test 1
     print("For test frequency %f:" % frequency)
     test_data = generate(frequency, sampling_rate, n)
-    gtz = Goertzel(sampling_rate, target_frequency, n)
-
-    # Process the samples
-    gtz.process_block(test_data)
 
     # Do the "basic Goertzel" processing.
-    res = gtz.get_complex_result()
-
+    gtz = goertzel(sampling_rate, target_frequency, n, optimized=False)
+    next(gtz)
+    try:
+        for d in test_data:
+            gtz.send(d)
+    except StopIteration as exc:
+        res = exc.value
     print("real = %f imag = %f" % (res.real, res.imag))
     magnitude2 = (res * res.conjugate()).real
     print("Relative magnitude squared = %f" % magnitude2)
@@ -63,7 +43,13 @@ def generate_and_test(frequency, target_frequency, sampling_rate, n):
     print("Relative magnitude = %f" % magnitude)
 
     # Do the "optimized Goertzel" processing
-    magnitude2 = gtz.get_magnitude_squared()
+    gtz = goertzel(sampling_rate, target_frequency, n)
+    next(gtz)
+    try:
+        for d in test_data:
+            gtz.send(d)
+    except StopIteration as exc:
+        magnitude2 = exc.value
     print("Relative magnitude squared = %f" % magnitude2)
     magnitude = sqrt(magnitude2)
     print("Relative magnitude = %f" % magnitude)
@@ -74,14 +60,13 @@ def generate_and_test2(frequency, target_frequency, sampling_rate, n):
     # Test 2
     print("Freq=%7.1f   " % frequency)
     test_data = generate(frequency, sampling_rate, n)
-    gtz = Goertzel(sampling_rate, target_frequency, n)
-
-    # Process the samples.
-    gtz.process_block(test_data)
-
-    # Do the "standard Goertzel" processing.
-    res = gtz.get_complex_result()
-
+    gtz = goertzel(sampling_rate, target_frequency, n, optimized=False)
+    next(gtz)
+    try:
+        for d in test_data:
+            gtz.send(d)
+    except StopIteration as exc:
+        res = exc.value
     magnitude2 = (res * res.conjugate()).real
     print("rel mag^2=%16.5f   " % magnitude2)
     magnitude = abs(res)
