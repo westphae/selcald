@@ -13,3 +13,9 @@ def goertzel(sampling_rate, target_frequency, n, optimized=True):
         q2, q1 = q1, (coeff*q1 - q2 + sample)
     return (q1**2 + q2**2 - q1*q2*coeff) if optimized else \
         complex(q1 - q2*cosine, q2*sine)
+
+
+def scanner(result, sampling_rate, target_frequency, n, optimized=True):
+    while True:
+        res = yield from goertzel(sampling_rate, target_frequency, n, optimized)
+        result.append(res)
