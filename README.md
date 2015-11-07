@@ -74,7 +74,7 @@ of 90% and in no case less than 60%.
 Tone codes are made up of various combinations of the following tones and 
 are designated by letter as indicated:
 
-Note: The tones are spaced by log-1 0.045 (approximately 10.9%)
+Note: The tones are spaced by 10**(0.045)-1 (approximately 10.9%)
 
 <table>
 <th>Designation</th><th>Frequency (Hz)</th>
@@ -131,7 +131,7 @@ Note: The tones are spaced by log-1 0.045 (approximately 10.9%)
 
 ### Table of Tone Frequencies and Derivation of the Frequencies
 
-fN = log-1 / 0.045 (N-1) + 2.00/. For the first tone, N=12, second N=13, etc.
+fN = 10**((N-1)*0.045+2). For the first tone, N=12, second N=13, etc.
 
 <table>
 <tr>
