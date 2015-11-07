@@ -41,18 +41,29 @@ def generate_and_test1(sample_frequency, target_frequency, sampling_rate, n):
     return magnitude2
 
 
-def generate_and_test2(sample_frequency, target_frequency, sampling_rate, n):
-    # Generate sample
-    test_data = generate(sample_frequency, sampling_rate, n)
-
+def generate_and_test2(sample_frequencies, target_frequency, sampling_rate, n):
+    # Generate samples
     results = {}
     scan = scanner(results, [target_frequency], sampling_rate, n,
                    optimized=False)
     next(scan)
-    for d in test_data:
-        scan.send(d)
+    for freq in sample_frequencies:
+        test_data = generate(freq, sampling_rate, n)
+        for d in test_data:
+            scan.send(d)
 
-    return results[target_frequency][-1]
+    return results[target_frequency]
+
+
+def read_test_results_csv(filename):
+    with open(filename, 'r') as f:
+        reader = csv.DictReader(f)
+
+        should = dict.fromkeys(reader.fieldnames, [])
+        for r in reader:
+            for k, v in r.items():
+                should[k] = [float(v)]+should[k]
+    return should
 
 
 class Test1(TestCase):
@@ -120,13 +131,14 @@ class Test1(TestCase):
         self.assertAlmostEqual(m, 547.483398, 0)
 
     def test2(self):
-        with open('goertzel_test_results.csv', 'r') as f:
-            reader = csv.DictReader(f)
-            for v in reader:
-                res = generate_and_test2(float(v['freq']),
-                                         self.test_target_frequency,
-                                         self.test_sample_rate, self.test_n)
-                m2 = (res*res.conjugate()).real
-                m = sqrt(m2)
-                self.assertAlmostEqual(m2/float(v['m2']), 1, 2)
-                self.assertAlmostEqual(m/float(v['m']), 1, 2)
+        should = read_test_results_csv('goertzel_test_results.csv')
+
+        res = generate_and_test2(should['freq'],
+                                 self.test_target_frequency,
+                                 self.test_sample_rate, self.test_n)
+        m2 = [(r*r.conjugate()).real for r in res]
+        m = [sqrt(r) for r in m2]
+        for m2a, m2s in zip(m2, should['m2']):
+            self.assertAlmostEqual(m2a/m2s, 1, 2)
+        for ma, ms in zip(m, should['m']):
+            self.assertAlmostEqual(ma/ms, 1, 2)
