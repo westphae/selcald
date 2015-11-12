@@ -15,14 +15,14 @@ def generate_and_test0(sample_frequency, target_frequency, sampling_rate, n):
     test_data = generate(sample_frequency, sampling_rate, n)
 
     # Do the "basic Goertzel" processing
-    results = {}
+    results = [[]]
     scan = scanner(results, [target_frequency], sampling_rate, n,
                    optimized=False)
     next(scan)
     for d in test_data:
         scan.send(d)
 
-    res = results[target_frequency][-1]
+    res = results[0][-1]
     return res
 
 
@@ -31,19 +31,19 @@ def generate_and_test1(sample_frequency, target_frequency, sampling_rate, n):
     test_data = generate(sample_frequency, sampling_rate, n)
 
     # Do the "optimized Goertzel" processing
-    results = {}
+    results = [[]]
     scan = scanner(results, [target_frequency], sampling_rate, n)
     next(scan)
     for d in test_data:
         scan.send(d)
 
-    magnitude2 = results[target_frequency][-1]
+    magnitude2 = results[0][-1]
     return magnitude2
 
 
 def generate_and_test2(sample_frequencies, target_frequency, sampling_rate, n):
     # Generate samples
-    results = {}
+    results = [[]]
     scan = scanner(results, [target_frequency], sampling_rate, n,
                    optimized=False)
     next(scan)
@@ -52,7 +52,7 @@ def generate_and_test2(sample_frequencies, target_frequency, sampling_rate, n):
         for d in test_data:
             scan.send(d)
 
-    return results[target_frequency]
+    return results[0]
 
 
 def read_test_results_csv(filename):
@@ -66,7 +66,7 @@ def read_test_results_csv(filename):
     return should
 
 
-class Test1(TestCase):
+class Test_From_Lyons(TestCase):
 
     def setUp(self):
         self.test_sample_rate = 8000.0  # 8kHz
