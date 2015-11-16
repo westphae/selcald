@@ -9,7 +9,7 @@ Feature: SELCAL tones for a variety of codes can be encoded with varying noise
     Given the frequency <freq> and a duration <dur>
     When the tone generation function is run
     Then a sample is generated for that frequency <freq>
-    And when fed to an audio generation library, sounds the correct frequency.
+    And when fed to an audio generation library, makes the correct sound.
 
     Examples:
       | freq    | dur |
@@ -21,7 +21,7 @@ Feature: SELCAL tones for a variety of codes can be encoded with varying noise
     Given the SELCAL tone <tone>
     When the tone generation function is run
     Then a sample is generated for the corresponding frequency <freq>
-    And when fed to an audio generation library, sounds the correct frequency.
+    And when fed to an audio generation library, makes the correct sound.
 
     Examples:
       | tone | freq   |
@@ -47,7 +47,7 @@ Feature: SELCAL tones for a variety of codes can be encoded with varying noise
      Given the SELCAL tones <tones>
      When the tone generation function is run
      Then a sample is generated for the corresponding frequencies
-     And when fed to an audio generation library, sounds the correct frequencies.
+     And when fed to an audio generation library, makes the correct sound.
 
      Examples:
        | tones |
@@ -57,55 +57,73 @@ Feature: SELCAL tones for a variety of codes can be encoded with varying noise
        | LR    |
 
   Scenario Outline: A full SELCAL signal can be generated.
-    Given the SELCAL tones <tone1> <tone2> <tone3> <tone4>
+    Given the SELCAL tones <tones>
     When the tone generation function is run
     Then a sample is generated for the corresponding frequencies
-    And when fed to an audio generation library, sounds the correct frequencies.
+    And when fed to an audio generation library, makes the correct sound.
 
     Examples:
-      | tone1 | tone2 | tone3 | tone4 |
-      | A     | B     | F     | M     |
-      | C     | H     | G     | S     |
-      | D     | R     | L     | N     |
-
-  Scenario: Background noise can be generated.
-    Given a noise level
-    When the tone generation function is run
-    Then a sample is generated for the corresponding noise
-    And when fed to an audio generation library, sounds the correct noise.
+      | tones |
+      | ASBK  |
+      | DQJR  |
+      | FMBG  |
+      | FMHQ  |
+      | FPQR  |
+      | GJMR  |
+      | JPAM  |
+      | LPCG  |
+      | LPHQ  |
+      | MPEQ  |
+      | PQCG  |
+      | PRFJ  |
+      | PRGQ  |
 
   Scenario Outline: A full SELCAL signal can be generated with background noise.
-    Given the SELCAL tones <tone1> <tone2> <tone3> <tone4>
+    Given the SELCAL tones <tones>
     And a chosen noise level <noise_level>
     When the tone generation function is run
     Then a sample is generated for the corresponding frequencies
-    And when fed to an audio generation library, sounds the correct frequencies
-    And there is appropriate background noise.
+    And when fed to an audio generation library, makes the correct sound.
 
     Examples:
-      | tone1 | tone2 | tone3 | tone4 | noise_level |
-      | A     | B     | F     | M     | 0.0         |
-      | A     | B     | F     | M     | 0.2         |
-      | C     | H     | G     | S     | 0.4         |
-      | C     | H     | G     | S     | 0.6         |
-      | D     | R     | L     | N     | 0.8         |
-      | D     | R     | L     | N     | 1.0         |
+      | tones | noise_level |
+      | ASBK  | 0.2         |
+      | DQJR  | 1.1         |
+      | FMBG  | 0.3         |
+      | FMHQ  | 0.8         |
+      | FPQR  | 4.6         |
+      | GJMR  | 0.8         |
+      | JPAM  | 0.9         |
+      | LPCG  | 9.7         |
+      | LPHQ  | 0.8         |
+      | MPEQ  | 0.0         |
+      | PQCG  | 1.0         |
+      | PRFJ  | 0.4         |
+      | PRGQ  | 2.5         |
 
   Scenario Outline: A full SELCAL signal can be generated with background noise and
     variations of the tone frequencies and durations and the pause duration
     consistent with the SELCAL standard.
-    Given the SELCAL tones <tone1> <tone2> <tone3> <tone4>
+    Given the SELCAL tones <tones>
     And a chosen noise level <noise_level>
+    And a choice of <randomization>
     When the tone generation function is run
     Then a sample is generated for the corresponding frequencies
-    And when fed to an audio generation library, sounds the correct frequencies
-    And there is appropriate background noise.
+    And when fed to an audio generation library, makes the correct sound.
 
     Examples:
-      | tone1 | tone2 | tone3 | tone4 | noise_level |
-      | A     | B     | F     | M     | 0.0         |
-      | A     | B     | F     | M     | 0.2         |
-      | C     | H     | G     | S     | 0.4         |
-      | C     | H     | G     | S     | 0.6         |
-      | D     | R     | L     | N     | 0.8         |
-      | D     | R     | L     | N     | 1.0         |
+      | tones | noise_level | randomization |
+      | ASBK  | 0.2         | True          |
+      | DQJR  | 1.1         | True          |
+      | FMBG  | 0.3         | True          |
+      | FMHQ  | 0.8         | True          |
+      | FPQR  | 4.6         | True          |
+      | GJMR  | 0.8         | True          |
+      | JPAM  | 0.9         | True          |
+      | LPCG  | 9.7         | True          |
+      | LPHQ  | 0.8         | True          |
+      | MPEQ  | 0.0         | True          |
+      | PQCG  | 1.0         | True          |
+      | PRFJ  | 0.4         | True          |
+      | PRGQ  | 2.5         | True          |
+
