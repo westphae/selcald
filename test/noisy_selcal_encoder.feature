@@ -54,6 +54,7 @@ Feature: SELCAL tones for a variety of codes can be encoded with varying noise
        | AB    |
        | CH    |
        | DR    |
+       | LR    |
 
   Scenario Outline: A full SELCAL signal can be generated.
     Given the SELCAL tones <tone1> <tone2> <tone3> <tone4>

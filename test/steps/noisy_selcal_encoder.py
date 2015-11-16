@@ -1,5 +1,4 @@
 from behave import *
-from selcald.binsize import SelcalParams
 import selcale.gensounds as gs
 
 
@@ -14,7 +13,7 @@ def step_impl(context, freq, dur):
     :type dur: str
     """
     context.freq = [float(freq)]
-    context.dur = [float(dur)]
+    context.dur = float(dur)
 
 
 @when("the tone generation function is run")
@@ -22,24 +21,29 @@ def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    context.samp = gs.genfreq(context.freq[-1], context.dur[-1])
+    context.samp = gs.genfreq(context.freq, context.dur)
 
 
-@then("a sample is generated for (?:that|the corresponding) " +
-      "frequency (?P<freq>.+)")
-def step_impl(context, freq):
+@then("a sample is generated for (?:that|the corresponding) frequency (?P<freq>.+)")
+def step_impl(context, freq=None):
     """
     :type context: behave.runner.Context
     :type freq: str
     """
-    print(freq, type(freq))
-    print(context.freq[-1], type(context.freq))
     assert round(context.freq[-1]-float(freq), 1) == 0
     context.buf = gs.buffer(context.samp)
 
 
+@then("a sample is generated for the corresponding frequencies")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.buf = gs.buffer(context.samp)
+
+
 @step("when fed to an audio generation library, " +
-      "sounds the correct frequenc(?:y|ies)?")
+      "sounds the correct frequenc(?:y|ies).")
 def step_impl(context):
     """
     :type context: behave.runner.Context
@@ -54,9 +58,9 @@ def step_impl(context, tones):
     :type tones: str
     """
     for t in tones:
-        assert t in context.params.letters
-    context.letters = list(tones)
+        assert t.upper() in context.params.letters
+    context.letters = list(tones.upper())
     context.freq = [context.params.selcal_tones[l] for l in context.letters]
-    context.dur = [1 for l in context.letters]
+    context.dur = 1
 
 

@@ -1,7 +1,6 @@
 import pyaudio
 import wave
 from math import sin, pi
-from itertools import cycle
 import struct
 from selcald.binsize import SelcalParams
 
@@ -29,12 +28,15 @@ def playwav(fn, chunksize=1024):
     p.terminate()
 
 
-def genfreq(freqency, duration, amplitude=1, samprate=8000):
-    assert amplitude<=1 and amplitude>=0
-    a = amplitude*2**15-1
+def genfreq(freqencies, duration, amplitudes=None, samprate=8000):
+    amplitudes = amplitudes or [1]*len(freqencies)
+    amplitudes = [x*2**15-1 for x in amplitudes]
     n = 0
     while n < samprate*duration:
-        yield struct.pack('h', int(a*(sin((2*pi)/(samprate/freqency)*n))))
+        samp = 0
+        for a,f in zip(amplitudes, freqencies):
+            samp += a*(sin((2*pi)/(samprate/f)*n))
+        yield struct.pack('h', int(samp/len(freqencies)))
         n += 1
 
 
