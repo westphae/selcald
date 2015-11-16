@@ -69,5 +69,3 @@ def playSELCALTone(tone, duration, amplitude, samprate=8000):
     freq = selcal_params.selcal_tones[tone]
     b = buffer(genfreq(freq, duration, amplitude, samprate))
     playsound(b)
-
-

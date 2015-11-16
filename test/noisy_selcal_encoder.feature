@@ -101,9 +101,7 @@ Feature: SELCAL tones for a variety of codes can be encoded with varying noise
       | PRFJ  | 0.4         |
       | PRGQ  | 2.5         |
 
-  Scenario Outline: A full SELCAL signal can be generated with background noise and
-    variations of the tone frequencies and durations and the pause duration
-    consistent with the SELCAL standard.
+  Scenario Outline: A full SELCAL signal can be generated with background noise and variations.
     Given the SELCAL tones <tones>
     And a chosen noise level <noise_level>
     And a choice of <randomization>

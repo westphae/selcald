@@ -1,10 +1,17 @@
 import os
+import random
 from itertools import chain
 from behave import *
 import selcale.gensounds as gs
 
 
 use_step_matcher("re")
+random.seed(1)
+
+
+var = {'code_dur': 0.25,
+       'pause_dur': 0.1,
+       'tone': 0.0015}
 
 
 @given("the frequency (?P<freq>.+) and a duration (?P<dur>.+)")
@@ -24,12 +31,22 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     noise_level = 0 if 'noise_level' not in context else context.noise_level
-    samp = gs.genfreq(context.freq[:2], context.dur, noise_level=noise_level)
+    d1, d2, d3 = context.dur, 0.2, context.dur
+    if 'rand' in context and context.rand:
+        context.freq = [(1-var['tone']*2*(random.random()-0.5))*f
+                        for f in context.freq]
+        d1 += var['code_dur']*2*(random.random()-0.5)
+        d2 += var['pause_dur']*2*(random.random()-0.5)
+        d3 += var['code_dur']*2*(random.random()-0.5)
+        print(d1, d2, d3)
+    samp = gs.genfreq(context.freq[:2], d1, noise_level=noise_level)
+    pause1 = gs.genfreq([0], d2, noise_level=noise_level)
+    pause2 = gs.genfreq([0], d2, noise_level=noise_level)
     if len(context.freq) > 2:
-        pause = gs.genfreq([0], 0.2, noise_level=noise_level)
-        samp = chain(samp, pause, gs.genfreq(context.freq[2:], context.dur,
+        pause = gs.genfreq([0], d2, noise_level=noise_level)
+        samp = chain(samp, pause, gs.genfreq(context.freq[2:], d3,
                                              noise_level=noise_level))
-    context.samp = samp
+    context.samp = chain(pause1, samp, pause2)
 
 
 @then("a sample is generated for th(?:at|e corresponding) " +
@@ -93,4 +110,4 @@ def step_impl(context, randomization):
     :type context: behave.runner.Context
     :type randomization: str
     """
-    context.rand = (randomization=="True")
+    context.rand = (randomization == "True")
