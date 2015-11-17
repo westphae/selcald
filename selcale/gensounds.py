@@ -1,5 +1,6 @@
-import struct
 from math import sin, pi
+from itertools import chain
+import struct
 import random
 import wave
 import pyaudio
@@ -7,6 +8,11 @@ from selcald.binsize import SelcalParams
 
 selcal_params = SelcalParams()
 random.seed(1)
+
+
+var = {'code_dur': 0.25,
+       'pause_dur': 0.1,
+       'tone': 0.0015}
 
 
 def playwav(fn, chunksize=1024):
@@ -69,3 +75,21 @@ def playSELCALTone(tone, duration, amplitude, samprate=8000):
     freq = selcal_params.selcal_tones[tone]
     b = buffer(genfreq(freq, duration, amplitude, samprate))
     playsound(b)
+
+
+def genSELCALSample(tones, noise_level=0, rand=False):
+    freq = [selcal_params.selcal_tones[l] for l in list(tones.upper())]
+    d1, d2, d3 = 1, 0.2, 1
+    if rand:
+        freq = [(1-var['tone']*2*(random.random()-0.5))*f for f in freq]
+        d1 += var['code_dur']*2*(random.random()-0.5)
+        d2 += var['pause_dur']*2*(random.random()-0.5)
+        d3 += var['code_dur']*2*(random.random()-0.5)
+        print(d1, d2, d3)
+    return chain(
+        genfreq([0], d2, noise_level=noise_level),
+        genfreq(freq[:2], d1, noise_level=noise_level),
+        genfreq([0], d2, noise_level=noise_level),
+        genfreq(freq[2:], d3, noise_level=noise_level),
+        genfreq([0], d2, noise_level=noise_level),
+    )

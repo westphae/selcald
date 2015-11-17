@@ -31,22 +31,27 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     noise_level = 0 if 'noise_level' not in context else context.noise_level
-    d1, d2, d3 = context.dur, 0.2, context.dur
-    if 'rand' in context and context.rand:
-        context.freq = [(1-var['tone']*2*(random.random()-0.5))*f
-                        for f in context.freq]
-        d1 += var['code_dur']*2*(random.random()-0.5)
-        d2 += var['pause_dur']*2*(random.random()-0.5)
-        d3 += var['code_dur']*2*(random.random()-0.5)
-        print(d1, d2, d3)
-    samp = gs.genfreq(context.freq[:2], d1, noise_level=noise_level)
-    pause1 = gs.genfreq([0], d2, noise_level=noise_level)
-    pause2 = gs.genfreq([0], d2, noise_level=noise_level)
-    if len(context.freq) > 2:
-        pause = gs.genfreq([0], d2, noise_level=noise_level)
-        samp = chain(samp, pause, gs.genfreq(context.freq[2:], d3,
-                                             noise_level=noise_level))
-    context.samp = chain(pause1, samp, pause2)
+    if len(context.freq) <= 2:
+        d1, d2, d3 = context.dur, 0.2, context.dur
+        if 'rand' in context and context.rand:
+            context.freq = [(1-var['tone']*2*(random.random()-0.5))*f
+                            for f in context.freq]
+            d1 += var['code_dur']*2*(random.random()-0.5)
+            d2 += var['pause_dur']*2*(random.random()-0.5)
+            d3 += var['code_dur']*2*(random.random()-0.5)
+            print(d1, d2, d3)
+        samp = gs.genfreq(context.freq[:2], d1, noise_level=noise_level)
+        pause1 = gs.genfreq([0], d2, noise_level=noise_level)
+        pause2 = gs.genfreq([0], d2, noise_level=noise_level)
+        if len(context.freq) > 2:
+            pause = gs.genfreq([0], d2, noise_level=noise_level)
+            samp = chain(samp, pause, gs.genfreq(context.freq[2:], d3,
+                                                 noise_level=noise_level))
+        context.samp = chain(pause1, samp, pause2)
+    else:
+        context.samp = gs.genSELCALSample(''.join(context.letters),
+                                          noise_level=noise_level,
+                                          rand=context.rand)
 
 
 @then("a sample is generated for th(?:at|e corresponding) " +
