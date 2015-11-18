@@ -77,7 +77,7 @@ def playSELCALTone(tone, duration, amplitude, samprate=8000):
     playsound(b)
 
 
-def genSELCALSample(tones, noise_level=0, rand=False):
+def genSELCALSample(tones, noise_level=0, rand=False, samprate=8000):
     freq = [selcal_params.selcal_tones[l] for l in list(tones.upper())]
     d1, d2, d3 = 1, 0.2, 1
     if rand:
@@ -87,9 +87,9 @@ def genSELCALSample(tones, noise_level=0, rand=False):
         d3 += var['code_dur']*2*(random.random()-0.5)
         print(d1, d2, d3)
     return chain(
-        genfreq([0], d2, noise_level=noise_level),
-        genfreq(freq[:2], d1, noise_level=noise_level),
-        genfreq([0], d2, noise_level=noise_level),
-        genfreq(freq[2:], d3, noise_level=noise_level),
-        genfreq([0], d2, noise_level=noise_level),
+        genfreq([0], d2, noise_level=noise_level, samprate=samprate),
+        genfreq(freq[:2], d1, noise_level=noise_level, samprate=samprate),
+        genfreq([0], d2, noise_level=noise_level, samprate=samprate),
+        genfreq(freq[2:], d3, noise_level=noise_level, samprate=samprate),
+        genfreq([0], d2, noise_level=noise_level, samprate=samprate),
     )

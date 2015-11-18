@@ -42,19 +42,19 @@ Feature: SELCAL tones for a variety of codes can be encoded with varying noise
       | R    | 1333.5 |
       | S    | 1479.1 |
 
-   Scenario Outline: Two simultaneous SELCAL tones can be generated,
-     corresponding to the first syllable of a SELCAL message.
-     Given the SELCAL tones <tones>
-     When the tone generation function is run
-     Then a sample is generated for the corresponding frequencies
-     And when fed to an audio generation library, makes the correct sound.
+  Scenario Outline: Two simultaneous SELCAL tones can be generated,
+  corresponding to the first syllable of a SELCAL message.
+    Given the SELCAL tones <tones>
+    When the tone generation function is run
+    Then a sample is generated for the corresponding frequencies
+    And when fed to an audio generation library, makes the correct sound.
 
-     Examples:
-       | tones |
-       | AB    |
-       | CH    |
-       | DR    |
-       | LR    |
+    Examples:
+      | tones |
+      | AB    |
+      | CH    |
+      | DR    |
+      | LR    |
 
   Scenario Outline: A full SELCAL signal can be generated.
     Given the SELCAL tones <tones>
@@ -124,4 +124,3 @@ Feature: SELCAL tones for a variety of codes can be encoded with varying noise
       | PQCG  | 1.0         | True          |
       | PRFJ  | 0.4         | True          |
       | PRGQ  | 2.5         | True          |
-

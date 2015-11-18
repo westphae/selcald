@@ -4,7 +4,6 @@ from itertools import chain
 from behave import *
 import selcale.gensounds as gs
 
-
 use_step_matcher("re")
 random.seed(1)
 
@@ -30,7 +29,6 @@ def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    noise_level = 0 if 'noise_level' not in context else context.noise_level
     if len(context.freq) <= 2:
         d1, d2, d3 = context.dur, 0.2, context.dur
         if 'rand' in context and context.rand:
@@ -40,18 +38,24 @@ def step_impl(context):
             d2 += var['pause_dur']*2*(random.random()-0.5)
             d3 += var['code_dur']*2*(random.random()-0.5)
             print(d1, d2, d3)
-        samp = gs.genfreq(context.freq[:2], d1, noise_level=noise_level)
-        pause1 = gs.genfreq([0], d2, noise_level=noise_level)
-        pause2 = gs.genfreq([0], d2, noise_level=noise_level)
+        samp = gs.genfreq(context.freq[:2], d1, noise_level=context.noise_level,
+                          samprate=context.samprate)
+        pause1 = gs.genfreq([0], d2, noise_level=context.noise_level,
+                          samprate=context.samprate)
+        pause2 = gs.genfreq([0], d2, noise_level=context.noise_level,
+                          samprate=context.samprate)
         if len(context.freq) > 2:
-            pause = gs.genfreq([0], d2, noise_level=noise_level)
+            pause = gs.genfreq([0], d2, noise_level=context.noise_level,
+                          samprate=context.samprate)
             samp = chain(samp, pause, gs.genfreq(context.freq[2:], d3,
-                                                 noise_level=noise_level))
+                                             noise_level=context.noise_level,
+                          samprate=context.samprate))
         context.samp = chain(pause1, samp, pause2)
     else:
         context.samp = gs.genSELCALSample(''.join(context.letters),
-                                          noise_level=noise_level,
-                                          rand=context.rand)
+                                          noise_level=context.noise_level,
+                                          rand=context.rand,
+                                          samprate=context.samprate)
 
 
 @then("a sample is generated for th(?:at|e corresponding) " +
@@ -62,15 +66,15 @@ def step_impl(context, freq=None):
     :type freq: str
     """
     assert round(context.freq[-1]-float(freq), 1) == 0
-    context.buf = gs.buffer(context.samp)
+    context.buf = gs.buffer(context.samp, context.n)
 
 
-@then("a sample is generated for the corresponding frequencies")
+@then("a sample is generated(?:| for the corresponding frequenc(?:y|ies))")
 def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    context.buf = gs.buffer(context.samp)
+    context.buf = gs.buffer(context.samp, context.n)
 
 
 @step("when fed to an audio generation library, makes the correct sound.")
@@ -78,7 +82,7 @@ def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    gs.playsound(context.samp)
+    gs.playsound(context.buf, context.samprate)
     if 'fn' in context:
         gs.playwav(context.fn)
 
@@ -105,8 +109,7 @@ def step_impl(context, noise_level):
     :type context: behave.runner.Context
     :type noise_level: str
     """
-    noise_level = float(noise_level)
-    context.noise_level = noise_level
+    context.noise_level = float(noise_level)
 
 
 @step("a choice of (?P<randomization>.+)")
