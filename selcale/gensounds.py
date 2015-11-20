@@ -77,19 +77,26 @@ def playSELCALTone(tone, duration, amplitude, samprate=8000):
     playsound(b)
 
 
-def genSELCALSample(tones, noise_level=0, rand=False, samprate=8000):
-    freq = [selcal_params.selcal_tones[l] for l in list(tones.upper())]
+def genSELCALSample(tones, noise_level=0, delays=0.5,
+                    rand=False, samprate=8000):
+    try:
+        d0, d4 = delays
+    except TypeError:
+        d0 = d4 = delays
     d1, d2, d3 = 1, 0.2, 1
+    freq = [selcal_params.selcal_tones[l] for l in list(tones.upper())]
     if rand:
         freq = [(1-var['tone']*2*(random.random()-0.5))*f for f in freq]
+        d0 *= random.random()
         d1 += var['code_dur']*2*(random.random()-0.5)
         d2 += var['pause_dur']*2*(random.random()-0.5)
         d3 += var['code_dur']*2*(random.random()-0.5)
-        print(d1, d2, d3)
+        d4 *= random.random()
+        print(d0, d1, d2, d3, d4)
     return chain(
-        genfreq([0], d2, noise_level=noise_level, samprate=samprate),
+        genfreq([0], d0, noise_level=noise_level, samprate=samprate),
         genfreq(freq[:2], d1, noise_level=noise_level, samprate=samprate),
         genfreq([0], d2, noise_level=noise_level, samprate=samprate),
         genfreq(freq[2:], d3, noise_level=noise_level, samprate=samprate),
-        genfreq([0], d2, noise_level=noise_level, samprate=samprate),
+        genfreq([0], d4, noise_level=noise_level, samprate=samprate),
     )

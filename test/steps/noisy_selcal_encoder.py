@@ -30,19 +30,22 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     if len(context.freq) <= 2:
-        d1, d2, d3 = context.dur, 0.2, context.dur
+        d0, d1, d2, d3, d4 = context.delays[0], context.dur, 0.2, context.dur,\
+                             context.delays[-1]
         if 'rand' in context and context.rand:
             context.freq = [(1-var['tone']*2*(random.random()-0.5))*f
                             for f in context.freq]
+            d0 *= random.random()
             d1 += var['code_dur']*2*(random.random()-0.5)
             d2 += var['pause_dur']*2*(random.random()-0.5)
             d3 += var['code_dur']*2*(random.random()-0.5)
-            print(d1, d2, d3)
+            d4 *= random.random()
+            print(d0, d1, d2, d3, d4)
         samp = gs.genfreq(context.freq[:2], d1, noise_level=context.noise_level,
                           samprate=context.samprate)
-        pause1 = gs.genfreq([0], d2, noise_level=context.noise_level,
+        pause1 = gs.genfreq([0], d0, noise_level=context.noise_level,
                           samprate=context.samprate)
-        pause2 = gs.genfreq([0], d2, noise_level=context.noise_level,
+        pause2 = gs.genfreq([0], d4, noise_level=context.noise_level,
                           samprate=context.samprate)
         if len(context.freq) > 2:
             pause = gs.genfreq([0], d2, noise_level=context.noise_level,
@@ -54,6 +57,7 @@ def step_impl(context):
     else:
         context.samp = gs.genSELCALSample(''.join(context.letters),
                                           noise_level=context.noise_level,
+                                          delays = context.delays,
                                           rand=context.rand,
                                           samprate=context.samprate)
 
