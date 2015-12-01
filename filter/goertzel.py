@@ -2,8 +2,7 @@ from math import sin, cos, pi
 
 
 def goertzel(sampling_rate, target_frequencies, n, optimized=True):
-    omega = [(2*pi/n)*round(n*freq/sampling_rate)
-             for freq in target_frequencies]
+    omega = [2*pi*freq/sampling_rate for freq in target_frequencies]
     sine = [sin(o) for o in omega]
     cosine = [cos(o) for o in omega]
     coeff = [2*c for c in cosine]
