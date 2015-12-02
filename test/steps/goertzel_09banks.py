@@ -27,7 +27,10 @@ def step_impl(context, ftype):
     :type context: behave.runner.Context
     :type ftype: str
     """
-    context.target_freq = 941
+    # This rigamarole is necessary because Banks' example uses integral bins
+    # but Geortzel doesn't require integral bins.
+    context.target_freq = round(context.n*941/context.sample_rate) * \
+                          context.sample_rate/context.n
     context.results = [[]]
     context.ftype = ftype
     context.scanner = scanner(context.results, [context.target_freq],
