@@ -6,24 +6,30 @@ import filter.goertzel as gf
 use_step_matcher("re")
 
 
-@step("a Goertzel filter tuned for tones? (?P<ftones>.+)")
-def step_impl(context, ftones):
+@step("a (?P<detector>.+) tuned for tones? (?P<ftones>.+)")
+def step_impl(context, detector, ftones):
     """
     :type context: behave.runner.Context
+    :type detector: str
     :type ftones: str
     """
     context.result = [[] for i in ftones]
     context.fletters = list(ftones.upper())
     context.ffreq = [context.params.selcal_tones[l] for l in context.fletters]
-    context.scanner = gf.scanner(context.result, context.ffreq, context.samprate,
-                                context.n)
+    if detector == "Goertzel filter":
+        context.scanner = gf.scanner(context.result, context.ffreq,
+                                       context.samprate, context.n)
+    else:
+        context.scanner = gf.scanner(context.result, context.ffletters,
+                                       context.samprate, context.n)
     next(context.scanner)
 
 
-@step("the sample is fed into the Goertzel filter")
-def step_impl(context):
+@step("the sample is fed into the (?P<detector>.+)")
+def step_impl(context, detector):
     """
     :type context: behave.runner.Context
+    :type detector: str
     """
     for chunk in context.buf:
         dat = struct.unpack(str(int(len(chunk)/2))+'H', chunk)
@@ -31,7 +37,7 @@ def step_impl(context):
             context.scanner.send(d/(2**15-1))
 
 
-@step("the Goertzel filter (?P<does>.+) detect that frequency\.")
+@step("the Goertzel filter (?P<does>.+) detect the frequencies\.")
 def step_impl(context, does):
     """
     :type context: behave.runner.Context

@@ -4,10 +4,10 @@ Feature: Goertzel filter can accurately detect a selcal signal and report the co
   Scenario Outline: Goertzel filter can detect a single SELCAL tone without noise.
     Given the SELCAL tone <tone>
     And a Goertzel filter tuned for tone <ftone>
-    When the tone generation function is run
+    When the tone generation function is run without variations
     Then a sample is generated for the corresponding frequency
     And the sample is fed into the Goertzel filter
-    And the Goertzel filter does detect that frequency.
+    And the Goertzel filter does detect the frequencies.
 
     Examples:
       | tone | ftone  |
@@ -32,10 +32,10 @@ Feature: Goertzel filter can accurately detect a selcal signal and report the co
     a single SELCAL tone without noise.
     Given the SELCAL tone <tone>
     And a Goertzel filter tuned for tone <ftone>
-    When the tone generation function is run
+    When the tone generation function is run without variations
     Then a sample is generated for the corresponding frequency
     And the sample is fed into the Goertzel filter
-    And the Goertzel filter does not detect that frequency.
+    And the Goertzel filter does not detect the frequencies.
 
     Examples:
       | tone | ftone  |
@@ -59,10 +59,10 @@ Feature: Goertzel filter can accurately detect a selcal signal and report the co
   Scenario Outline: Goertzel filter does not detect a SELCAL tone in pure noise.
     Given a noise level <noise_level>
     And a Goertzel filter tuned for tone <ftone>
-    When the tone generation function is run
+    When the tone generation function is run without variations
     Then a sample is generated
     And the sample is fed into the Goertzel filter
-    And the Goertzel filter does not detect that frequency.
+    And the Goertzel filter does not detect the frequencies.
 
     Examples:
       | ftone | noise_level |
@@ -87,10 +87,10 @@ Feature: Goertzel filter can accurately detect a selcal signal and report the co
     Given the SELCAL tone <tone>
     And a chosen noise level <noise_level>
     And a Goertzel filter tuned for tone <ftone>
-    When the tone generation function is run
+    When the tone generation function is run without variations
     Then a sample is generated for the corresponding frequency
     And the sample is fed into the Goertzel filter
-    And the Goertzel filter does detect that frequency.
+    And the Goertzel filter does detect the frequencies.
 
     Examples:
       | tone | ftone  | noise_level |
@@ -114,10 +114,10 @@ Feature: Goertzel filter can accurately detect a selcal signal and report the co
   Scenario Outline: Goertzel filter can detect two SELCAL tones without noise.
     Given the SELCAL tones <tones>
     And a Goertzel filter tuned for tones <ftones>
-    When the tone generation function is run
+    When the tone generation function is run without variations
     Then a sample is generated for the corresponding frequency
     And the sample is fed into the Goertzel filter
-    And the Goertzel filter does detect that frequency.
+    And the Goertzel filter does detect the frequencies.
 
     Examples:
       | tones | ftones |
@@ -142,10 +142,10 @@ Feature: Goertzel filter can accurately detect a selcal signal and report the co
     Given the SELCAL tones <tones>
     And a chosen noise level <noise_level>
     And a Goertzel filter tuned for tones <ftones>
-    When the tone generation function is run
+    When the tone generation function is run without variations
     Then a sample is generated for the corresponding frequency
     And the sample is fed into the Goertzel filter
-    And the Goertzel filter does detect that frequency.
+    And the Goertzel filter does detect the frequencies.
 
     Examples:
       | tones | ftones | noise_level |

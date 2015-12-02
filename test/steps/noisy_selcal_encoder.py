@@ -24,15 +24,16 @@ def step_impl(context, freq, dur):
     context.dur = float(dur)
 
 
-@when("the tone generation function is run")
-def step_impl(context):
+@when("the tone generation function is run (?P<variation>.+) variations")
+def step_impl(context, variation):
     """
     :type context: behave.runner.Context
+    :type variation: str
     """
     if len(context.freq) <= 2:
         d0, d1, d2, d3, d4 = context.delays[0], context.dur, 0.2, context.dur,\
                              context.delays[-1]
-        if 'rand' in context and context.rand:
+        if variation == 'with':
             context.freq = [(1-var['tone']*2*(random.random()-0.5))*f
                             for f in context.freq]
             d0 *= random.random()
@@ -58,7 +59,7 @@ def step_impl(context):
         context.samp = gs.genSELCALSample(''.join(context.letters),
                                           noise_level=context.noise_level,
                                           delays = context.delays,
-                                          rand=context.rand,
+                                          rand=(variation == 'with'),
                                           samprate=context.samprate)
 
 
@@ -115,11 +116,3 @@ def step_impl(context, noise_level):
     """
     context.noise_level = float(noise_level)
 
-
-@step("a choice of (?P<randomization>.+)")
-def step_impl(context, randomization):
-    """
-    :type context: behave.runner.Context
-    :type randomization: str
-    """
-    context.rand = (randomization == "True")
